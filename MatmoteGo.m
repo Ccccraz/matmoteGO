@@ -11,42 +11,47 @@
 % sendTo - Sends a message to a specific endpoint
 %
 %
-classdef PuremoteGo < handle
+classdef MatmoteGo < handle
     properties ( Access = private )
-        baseUrl = 'http://localhost:9012';
+        baseUri = matlab.net.URI('http://localhost:9012');
+        baseSendEndpoint = 'data';
         options = weboptions("MediaType","application/json");
-        baseSendEndpoint = '/data';
         process;
     end
     methods
-        function obj = PuremoteGo()
+        function obj = MatmoteGo()
             runtime = java.lang.Runtime.getRuntime();
-            obj.process = runtime.exec('puremotego.exe');
+            obj.process = runtime.exec('puremotego');
             disp('PuremoteGo started');
         end
-        
+
         function createEndpoint(obj, endpoint)
-            createUrl = strcat(obj.baseUrl, '/create', '/', endpoint);
-            respone = webwrite(createUrl, []);
+            createUri = obj.baseUri;
+            createUri.Path = {"create", endpoint};
+            respone = webwrite(createUri, []);
             disp(respone);
         end
-        
+
         function send(obj, msg)
-            SendUrl = strcat(obj.baseUrl, obj.baseSendEndpoint);
-            respone = webwrite(SendUrl, msg, obj.options);
+            sendUri = obj.baseUri;
+            sendUri.Path = {obj.baseSendEndpoint};
+
+            respone = webwrite(sendUri, msg, obj.options);
             disp(respone);
         end
-        
+
         function sendTo(obj, msg, endpoint)
-            sendUrl = strcat(obj.baseUrl, '/', endpoint);
-            respone = webwrite(sendUrl, msg, obj.options);
+            sendUri = obj.baseUri;
+            sendUri.Path = {endpoint};
+
+            respone = webwrite(sendUri, msg, obj.options);
             disp(respone);
         end
-        
+
         function delete(obj)
             obj.process.destroy();
             disp('PuremoteGo stopped');
         end
-        
+
     end
 end
