@@ -1,5 +1,6 @@
+function sendData()
 % create a PuremoteGo object
-pu = PuremoteGo();
+remote = MatmoteGo();
 
 % create a fake data structure
 data = struct('name', 'Alice', 'age', 30, 'salary', 50000);
@@ -7,15 +8,7 @@ data = struct('name', 'Alice', 'age', 30, 'salary', 50000);
 % send data to the default endpoint
 for i = 1:10
     pause(1);
-    pu.send(data);
+    remote.send(data);
+    disp("Wrote " + num2str(i) + " msg to data");
 end
-
-% create a new endpoint
-target = 'data_001';
-pu.createEndpoint(target);
-
-% send data to the new endpoint
-for i = 1:10
-    pause(1);
-    pu.sendTo(data, target);
 end
