@@ -23,7 +23,7 @@ classdef (Sealed) MatmoteGo < handle
     methods
         function obj = MatmoteGo()
             runtime = java.lang.Runtime.getRuntime();
-            obj.process = runtime.exec('puremotego');
+            obj.process = runtime.exec('cogmoteGO');
             disp('PuremoteGo started');
         end
         
