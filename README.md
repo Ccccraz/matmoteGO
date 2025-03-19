@@ -35,11 +35,12 @@ end
 ```
 ```mermaid
 sequenceDiagram
-    matmoteGo->>matmoteGo: Start cogmoteGO process by constructing the object
+    matmoteGo->>cogmoteGO: Start cogmoteGO process by constructing the object
     loop 10 times
         matmoteGo->>cogmoteGO: Send data to default endpoint: data
+        cogmoteGO-->>matmoteGo: HTTP.OK
     end
-    matmoteGo->>matmoteGo: Stop cogmoteGO process by deconstructing the object
+    matmoteGo->>cogmoteGO: Stop cogmoteGO process by deconstructing the object
 ```
 
 ### Send data to custom endpoint
@@ -67,12 +68,14 @@ end
 ```
 ```mermaid
 sequenceDiagram
-    matmoteGo->>matmoteGo: Start cogmoteGO process by constructing the object
+    matmoteGo->>cogmoteGO: Start cogmoteGO process by constructing the object
     matmoteGo->>cogmoteGO: Create new data endpoint: trial
+    cogmoteGO-->>matmoteGo: HTTP.CREATED
     loop 10 times
         matmoteGo->>cogmoteGO: Send data to trial endpoint
+        cogmoteGO-->>matmoteGo: HTTP.OK
     end
-    matmoteGo->>matmoteGo: Stop cogmoteGO process by deconstructing the object
+    matmoteGo->>cogmoteGO: Stop cogmoteGO process by deconstructing the object
 ```
 
 ### Send data to multiple endpoints at the same time
@@ -102,7 +105,7 @@ end
 ```
 ```mermaid
 sequenceDiagram
-    matmoteGo->>matmoteGo: Start cogmoteGO process by constructing the object
+    matmoteGo->>cogmoteGO: Start cogmoteGO process by constructing the object
     matmoteGo->>cogmoteGO: Create new data endpoint: trial1
     matmoteGo->>cogmoteGO: Create new data endpoint: trial2
     loop 10 times
@@ -110,5 +113,5 @@ sequenceDiagram
         matmoteGo->>cogmoteGO: Send data to trial1 endpoint
         matmoteGo->>cogmoteGO: Send data to trial2 endpoint
     end
-    matmoteGo->>matmoteGo: Stop cogmoteGO process by deconstructing the object
+    matmoteGo->>cogmoteGO: Stop cogmoteGO process by deconstructing the object
 ```
