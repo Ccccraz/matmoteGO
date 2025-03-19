@@ -22,48 +22,74 @@ classdef (Sealed) MatmoteGo < handle
     end
     methods
         function obj = MatmoteGo()
-            runtime = java.lang.Runtime.getRuntime();
-            obj.process = runtime.exec('cogmoteGO');
-            disp('PuremoteGo started');
-        end
+            if ispc
+                platform_dir = 'windows_amd64';
+                exe_name = 'cogmoteGO.exe';
+            elseif isunix
+                arch = computer('arch');
+                if strcmp(arch, 'glnxa64')
+                    arch_suffix = 'amd64';
+                elseif strcmp(arch, 'aarch64')
+                    arch_suffix = 'arm64';
+                else
+                    error('Unsupported Linux architecture: %s', arch);
+                end
+                platform_dir = ['linux_' arch_suffix];
+                exe_name = 'cogmoteGO';
+            else
+                error('Unsupported operating system');
+            end
 
+            exe_path = fullfile('bin', platform_dir, exe_name);
+            
+            if ~exist(exe_path, 'file')
+                error('Binary not found at: %s', exe_path);
+            end
+
+            absolute_path = java.io.File(exe_path).getAbsolutePath();
+            runtime = java.lang.Runtime.getRuntime();
+            obj.process = runtime.exec(absolute_path);
+            
+            disp('MatmoteGo started');
+        end
+        
         function response = createEndpoint(obj, endpoint)
             % create the URL for the request
             createUrl = obj.baseUri;
             createUrl.Path = {"create"};
             msg = struct('name', endpoint);
-
+            
             % create request
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-
+            
             % send request
             response = obj.sendRequest(request, createUrl);
             obj.handleResponse(response);
         end
-
+        
         function response = send(obj, msg)
             sendUri = obj.baseUri;
             sendUri.Path = {"data"};
-
+            
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-
+            
             response = obj.sendRequest(request, sendUri);
             obj.handleResponse(response);
         end
-
+        
         function response = sendTo(obj, msg, endpoint)
             sendUri = obj.baseUri;
             sendUri.Path = {endpoint};
-
+            
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-
+            
             response = obj.sendRequest(request, sendUri);
             obj.handleResponse(response);
         end
-
+        
         function delete(obj)
             obj.process.destroy();
             disp('PuremoteGo stopped');
@@ -78,13 +104,13 @@ classdef (Sealed) MatmoteGo < handle
                 response = [];
             end
         end
-
+        
         function response = handleResponse(~, response)
             % handle HTTP response based on status code
             if isempty(response)
                 return;
             end
-
+            
             switch response.StatusCode
                 case matlab.net.http.StatusCode.Conflict
                     warning("MatmoteGo:endpointExists", "Endpoint already exists");
