@@ -26,44 +26,44 @@ classdef (Sealed) MatmoteGo < handle
             obj.process = runtime.exec('cogmoteGO');
             disp('PuremoteGo started');
         end
-        
-        function createEndpoint(obj, endpoint)
+
+        function response = createEndpoint(obj, endpoint)
             % create the URL for the request
             createUrl = obj.baseUri;
             createUrl.Path = {"create"};
             msg = struct('name', endpoint);
-            
+
             % create request
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-            
+
             % send request
             response = obj.sendRequest(request, createUrl);
-            obj.handleResponse(response, 'Endpoint created.', 'Endpoint already exists.', 'Invalid endpoint name.');
+            obj.handleResponse(response);
         end
-        
-        function send(obj, msg)
+
+        function response = send(obj, msg)
             sendUri = obj.baseUri;
             sendUri.Path = {"data"};
-            
+
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-            
+
             response = obj.sendRequest(request, sendUri);
-            obj.handleResponse(response, 'Message sent', '', 'Invalid message');
+            obj.handleResponse(response);
         end
-        
-        function sendTo(obj, msg, endpoint)
+
+        function response = sendTo(obj, msg, endpoint)
             sendUri = obj.baseUri;
             sendUri.Path = {endpoint};
-            
+
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
-            
+
             response = obj.sendRequest(request, sendUri);
-            obj.handleResponse(response, 'Message sent', '', 'Invalid message');
+            obj.handleResponse(response);
         end
-        
+
         function delete(obj)
             obj.process.destroy();
             disp('PuremoteGo stopped');
@@ -78,26 +78,20 @@ classdef (Sealed) MatmoteGo < handle
                 response = [];
             end
         end
-        
-        function handleResponse(~, response, successMsg, conflictMsg, badRequestMsg)
+
+        function response = handleResponse(~, response)
             % handle HTTP response based on status code
             if isempty(response)
                 return;
             end
+
             switch response.StatusCode
-                case matlab.net.http.StatusCode.Created
-                    disp("Success: " + successMsg);
                 case matlab.net.http.StatusCode.Conflict
-                    disp("Warning: " + conflictMsg);
-                case matlab.net.http.StatusCode.OK
-                    disp("Success: " + successMsg);
+                    warning("MatmoteGo:endpointExists", "Endpoint already exists");
                 case matlab.net.http.StatusCode.BadRequest
-                    disp("Error: " + badRequestMsg);
-                    disp("Message from cogmoteGO: " + response.Body.show());
+                    warning("MatmoteGo:invalidRequest", "Message from cogmoteGO: %s", response.Body.show());
                 case matlab.net.http.StatusCode.NotFound
-                    disp("Error: Endpoint not found.");
-                otherwise
-                    disp("Error: Unknown error: " + response.StatusCode + " - " + response.Body.show());
+                    warning("MatmoteGo:invalidEndpoint", "Endpoint not found");
             end
         end
     end
