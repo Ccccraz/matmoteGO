@@ -46,9 +46,8 @@ classdef (Sealed) MatmoteGo < handle
                 error('Binary not found at: %s', exe_path);
             end
 
-            absolute_path = java.io.File(exe_path).getAbsolutePath();
             runtime = java.lang.Runtime.getRuntime();
-            obj.process = runtime.exec(absolute_path);
+            obj.process = runtime.exec(exe_path);
             
             disp('MatmoteGo started');
         end
