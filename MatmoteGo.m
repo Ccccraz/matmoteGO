@@ -22,32 +22,7 @@ classdef (Sealed) MatmoteGo < handle
     end
     methods
         function obj = MatmoteGo()
-            if ispc
-                platform_dir = 'windows_amd64';
-                exe_name = 'cogmoteGO.exe';
-            elseif isunix
-                arch = computer('arch');
-                if strcmp(arch, 'glnxa64')
-                    arch_suffix = 'amd64';
-                elseif strcmp(arch, 'aarch64')
-                    arch_suffix = 'arm64';
-                else
-                    error('Unsupported Linux architecture: %s', arch);
-                end
-                platform_dir = ['linux_' arch_suffix];
-                exe_name = 'cogmoteGO';
-            else
-                error('Unsupported operating system');
-            end
-
-            exe_path = fullfile('bin', platform_dir, exe_name);
-            
-            if ~exist(exe_path, 'file')
-                error('Binary not found at: %s', exe_path);
-            end
-
-            runtime = java.lang.Runtime.getRuntime();
-            obj.process = runtime.exec(exe_path);
+            obj.process = runtime.exec("cogmoteGO");
             
             disp('MatmoteGo started');
         end
