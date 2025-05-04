@@ -28,7 +28,11 @@ classdef cmdProxy < handle
             
             if events > 0
                 cmd = obj.socket.recv();
-                obj.socket.send('OK');
+
+                data = struct('result', 'ok');
+                dataStr = jsonencode(data);
+
+                obj.socket.send(dataStr);
             else
                 cmd = [];
             end
