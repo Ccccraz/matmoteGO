@@ -11,7 +11,7 @@
 % sendTo - Sends a message to a specific endpoint
 %
 %
-classdef (Sealed) MatmoteGo < handle
+classdef (Sealed) broadcast < handle
     properties ( Access = private )
         process;
     end
@@ -21,10 +21,7 @@ classdef (Sealed) MatmoteGo < handle
         post = matlab.net.http.RequestMethod.POST;
     end
     methods
-        function obj = MatmoteGo()
-            obj.process = runtime.exec("cogmoteGO");
-            
-            disp('MatmoteGo started');
+        function obj = broadcast()
         end
         
         function response = createEndpoint(obj, endpoint)

@@ -1,5 +1,5 @@
 function createEndpoint()
-remote = MatmoteGo();
+remote = matmoteGO.broadcast();
 
 endpoint = "trial";
 remote.createEndpoint(endpoint);

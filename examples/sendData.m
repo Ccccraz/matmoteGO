@@ -1,6 +1,6 @@
 function sendData()
 % create a PuremoteGo object
-remote = MatmoteGo();
+remote = matmoteGO.broadcast();
 
 % create a fake data structure
 data = struct('name', 'Alice', 'age', 30, 'salary', 50000);

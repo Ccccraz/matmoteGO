@@ -1,6 +1,6 @@
 function sendMultiData()
 
-remote = MatmoteGo();
+remote = matmoteGO.broadcast();
 
 % create custom endpoint trial1 and trial2
 endpoint_1 = "trial1";
