@@ -40,6 +40,7 @@ classdef cmdProxy < handle
         
         function delete(obj)
             obj.socket.close();
+            obj.closeProxy();
         end
         
     end
@@ -96,6 +97,18 @@ classdef cmdProxy < handle
                 warning(exception.identifier, 'Handshake failed: %s', exception.message);
                 rethrow(exception);
             end
+        end
+
+        function closeProxy(obj)
+            % create the URL for the request
+            cmdProxyUrl = obj.baseUri;
+            cmdProxyUrl.Path = {"cmds", "proxies", "matlab"};
+
+            request = matlab.net.http.RequestMessage(matlab.net.http.RequestMethod.DELETE);
+            
+            % send request
+            response = obj.sendRequest(request, cmdProxyUrl);
+            obj.handleResponse(response);
         end
         
         function response = sendRequest(~, request, uri)
