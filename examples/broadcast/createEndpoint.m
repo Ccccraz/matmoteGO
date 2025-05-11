@@ -2,7 +2,7 @@ function createEndpoint()
 remote = matmoteGO.broadcast();
 
 endpoint = "trial";
-remote.createEndpoint(endpoint);
+remote.createBroadcast(endpoint);
 disp(endpoint + " Created");
 data = struct('name', 'Alice', 'age', 30, 'salary', 50000);
 
