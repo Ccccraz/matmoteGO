@@ -12,27 +12,35 @@
 %
 %
 classdef (Sealed) broadcast < handle
-    properties ( Access = private )
-        process;
+    properties
+        boardcasts (1, :) string
     end
     properties (Constant)
         baseUri = matlab.net.URI('http://localhost:9012');
+        basePath = {'broadcast', 'data'};
         headers = [matlab.net.http.field.ContentTypeField("application/json")];
-        post = matlab.net.http.RequestMethod.POST;
+        http_post = matlab.net.http.RequestMethod.POST;
+        http_delete = matlab.net.http.RequestMethod.DELETE;
     end
     methods
         function obj = broadcast()
         end
         
-        function response = createEndpoint(obj, endpoint)
+        function response = createBroadcast(obj, endpoint)
+            arguments (Input)
+                obj
+                endpoint string
+            end
+            
+            obj.boardcasts(end+1) = endpoint;
             % create the URL for the request
             createUrl = obj.baseUri;
-            createUrl.Path = {"create"};
+            createUrl.Path = obj.basePath;
             msg = struct('name', endpoint);
             
             % create request
             msgBody = matlab.net.http.MessageBody(msg);
-            request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
+            request = matlab.net.http.RequestMessage(obj.http_post, obj.headers, msgBody);
             
             % send request
             response = obj.sendRequest(request, createUrl);
@@ -40,30 +48,60 @@ classdef (Sealed) broadcast < handle
         end
         
         function response = send(obj, msg)
+            arguments (Input)
+                obj
+                msg struct
+            end
+            
+            % create the URL for the request
             sendUri = obj.baseUri;
-            sendUri.Path = {"data"};
+            sendUri.Path = [obj.basePath, 'default'];
             
             msgBody = matlab.net.http.MessageBody(msg);
-            request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
+            request = matlab.net.http.RequestMessage(obj.http_post, obj.headers, msgBody);
             
             response = obj.sendRequest(request, sendUri);
             obj.handleResponse(response);
         end
         
         function response = sendTo(obj, msg, endpoint)
+            arguments (Input)
+                obj
+                msg struct
+                endpoint string
+            end
+            
             sendUri = obj.baseUri;
-            sendUri.Path = {endpoint};
+            sendUri.Path = [obj.basePath, endpoint];
             
             msgBody = matlab.net.http.MessageBody(msg);
-            request = matlab.net.http.RequestMessage(obj.post, obj.headers, msgBody);
+            request = matlab.net.http.RequestMessage(obj.http_post, obj.headers, msgBody);
             
             response = obj.sendRequest(request, sendUri);
             obj.handleResponse(response);
         end
         
+        function response = closeBroadcast(obj, endpoint)
+            arguments (Input)
+                obj
+                endpoint string
+            end
+            
+            deleteUri = obj.baseUri;
+            deleteUri.Path = [obj.basePath, endpoint];
+            
+            request = matlab.net.http.RequestMessage(obj.http_delete, obj.headers, []);
+            response = obj.sendRequest(request, deleteUri);
+            obj.handleResponse(response);
+        end
+        
         function delete(obj)
-            obj.process.destroy();
-            disp('PuremoteGo stopped');
+            % delete all endpoints
+            if ~isempty(obj.boardcasts)
+                for i = 1:length(obj.boardcasts)
+                    obj.closeBroadcast(obj.boardcasts{i});
+                end
+            end
         end
     end
     methods (Access = private)
