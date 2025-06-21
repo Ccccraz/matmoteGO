@@ -17,7 +17,7 @@ classdef (Sealed) broadcast < handle
     end
     properties (Constant)
         baseUri = matlab.net.URI('http://localhost:9012');
-        basePath = {'broadcast', 'data'};
+        basePath = {'api', 'broadcast', 'data'};
         headers = [matlab.net.http.field.ContentTypeField("application/json")];
         http_post = matlab.net.http.RequestMethod.POST;
         http_delete = matlab.net.http.RequestMethod.DELETE;
@@ -56,6 +56,7 @@ classdef (Sealed) broadcast < handle
             % create the URL for the request
             sendUri = obj.baseUri;
             sendUri.Path = [obj.basePath, 'default'];
+            disp(sendUri)
             
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.http_post, obj.headers, msgBody);

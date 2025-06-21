@@ -9,6 +9,7 @@ classdef cmdProxy < handle
         hostname = 'localhost';
         port = 5555;
         baseUri = matlab.net.URI('http://localhost:9012');
+        basePath = {"api", "cmds", "proxies"};
         headers = [matlab.net.http.field.ContentTypeField("application/json")];
     end
     
@@ -61,7 +62,7 @@ classdef cmdProxy < handle
         function createProxy(obj)
             % create the URL for the request
             cmdProxyUrl = obj.baseUri;
-            cmdProxyUrl.Path = {"cmds", "proxies"};
+            cmdProxyUrl.Path = obj.basePath;
             
             msg = struct('nickname', 'matlab', 'hostname', obj.hostname, "port", obj.port);
             msgBody = matlab.net.http.MessageBody(msg);
@@ -102,7 +103,7 @@ classdef cmdProxy < handle
         function closeProxy(obj)
             % create the URL for the request
             cmdProxyUrl = obj.baseUri;
-            cmdProxyUrl.Path = {"cmds", "proxies", "matlab"};
+            cmdProxyUrl.Path = [obj.basePath, "matlab"]
 
             request = matlab.net.http.RequestMessage(matlab.net.http.RequestMethod.DELETE);
             

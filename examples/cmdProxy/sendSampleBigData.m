@@ -18,7 +18,7 @@ options = weboptions(...
 
 for i = 1:10
     try
-        response = webwrite('http://localhost:9012/cmds/proxies/matlab', dataStruct, options);
+        response = webwrite('http://localhost:9012/api/cmds/proxies/matlab', dataStruct, options);
         disp(response);
     catch ME
         disp(ME.message);
