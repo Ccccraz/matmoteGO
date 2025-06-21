@@ -7,7 +7,7 @@ options = weboptions(...
     'CharacterEncoding', 'UTF-8' ...
     );
 
-apiEndpoint = 'http://localhost:9012/cmds/proxies/matlab';
+apiEndpoint = 'http://localhost:9012/api/cmds/proxies/matlab';
 
 for i = 1:10
     selectedCmd = commandList{randi(length(commandList))};
