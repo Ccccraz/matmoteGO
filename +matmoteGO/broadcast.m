@@ -13,14 +13,14 @@
 %
 classdef (Sealed) broadcast < handle
     properties
-        boardcasts (1, :) string
+        broadcasts (1, :) string
     end
     properties (Constant)
-        baseUri = matlab.net.URI('http://localhost:9012');
-        basePath = {'api', 'broadcast', 'data'};
-        headers = [matlab.net.http.field.ContentTypeField("application/json")];
-        http_post = matlab.net.http.RequestMethod.POST;
-        http_delete = matlab.net.http.RequestMethod.DELETE;
+        baseUri = matlab.net.URI('http://localhost:9012')
+        basePath = {'api', 'broadcast', 'data'}
+        headers = [matlab.net.http.field.ContentTypeField("application/json")]
+        http_post = matlab.net.http.RequestMethod.POST
+        http_delete = matlab.net.http.RequestMethod.DELETE
     end
     methods
         function obj = broadcast()
@@ -32,7 +32,7 @@ classdef (Sealed) broadcast < handle
                 endpoint string
             end
             
-            obj.boardcasts(end+1) = endpoint;
+            obj.broadcasts(end+1) = endpoint;
             % create the URL for the request
             createUrl = obj.baseUri;
             createUrl.Path = obj.basePath;
@@ -56,7 +56,6 @@ classdef (Sealed) broadcast < handle
             % create the URL for the request
             sendUri = obj.baseUri;
             sendUri.Path = [obj.basePath, 'default'];
-            disp(sendUri)
             
             msgBody = matlab.net.http.MessageBody(msg);
             request = matlab.net.http.RequestMessage(obj.http_post, obj.headers, msgBody);
@@ -98,9 +97,9 @@ classdef (Sealed) broadcast < handle
         
         function delete(obj)
             % delete all endpoints
-            if ~isempty(obj.boardcasts)
-                for i = 1:length(obj.boardcasts)
-                    obj.closeBroadcast(obj.boardcasts{i});
+            if ~isempty(obj.broadcasts)
+                for i = 1:length(obj.broadcasts)
+                    obj.closeBroadcast(obj.broadcasts{i});
                 end
             end
         end
